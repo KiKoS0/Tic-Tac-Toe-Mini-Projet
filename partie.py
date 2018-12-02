@@ -30,7 +30,7 @@ class Partie:
                                     # Pendant le jeu et à chaque tour d'un joueur,
                                     # il faut affecter à cet attribut ce joueur courant.
         self.nb_parties_nulles = 0  # Le nombre de parties nulles (aucun joueur n'a gagné).
-
+#Still not completed
     def jouer(self):
         """
         Permet de démarrer la partie en commençant par l'affichage de ce texte:
@@ -90,7 +90,14 @@ class Partie:
         assert isinstance(nb_min, int), "Partie: nb_min doit être un entier."
         assert isinstance(nb_max, int), "Partie: nb_max doit être un entier."
 
-        pass
+        while(1):
+            print('Entrez s.v.p un nombre entre ' + str(nb_min) +' et ' + str(nb_max) + ' : ?')
+            nb=input()
+            if (((nb.isnumeric()) and (int(nb)>=nb_min) and (int(nb)<=nb_max) )) :
+                return (int(nb))
+            else:
+                print("*** Valeur incorrecte! ***")
+
 
     def demander_forme_pion(self):
         """
@@ -102,9 +109,14 @@ class Partie:
         Returns:
             string: Le catactère saisi par l'utilisateur après validation.
         """
+        while (1):
+            print("Sélectionnez s.v.p la forme de votre pion(X,O)")
+            formePion=input()
+            if(formePion in {'X','O'}):
+                return formePion
 
-        pass
 
+#Still not completed
     def tour(self, choix):
         """
         Permet d'exécuter le tour d'un joueur (une personne ou un ordinateur).
@@ -142,11 +154,24 @@ class Partie:
                         coordonnées (ligne, colonne) de la case choisie.
         """
 
-        pass
+
+
+        while(1):
+            print("Numéro de la ligne :")
+            ligne = self.saisir_nombre(0,2)
+            print("Numéro de la colonne :")
+            colonne = self.saisir_nombre(0,2)
+            if(self.plateau.position_valide(ligne,colonne)):
+                return({'ligne':ligne,'colonne':colonne})
+
 
 if __name__ == "__main__":
     # Point d'entrée du programme.
     # On initialise une nouvelle partie, et on appelle la méthode jouer().
     partie = Partie()
     partie.jouer()
+    print("All")
+    plat = Plateau()
+    print(partie.demander_postion())
 
+    print(plat)
