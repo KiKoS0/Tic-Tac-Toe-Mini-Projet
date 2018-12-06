@@ -7,6 +7,10 @@ ce fichier est supposé faire ! """
 from plateau import Plateau
 from joueur import Joueur
 
+
+import os
+from itertools import cycle
+
 class Partie:
     """
     Classe modélisant une partie du jeu Tic-Tac-Toe utilisant
@@ -69,7 +73,43 @@ class Partie:
         ***Merci et au revoir !***
         """
 
-        pass
+
+        rep = 2
+        while(0):
+            print('---------------Menu---------------')
+            print("1- Jouer avec l'ordinateur.")
+            print("2- Jouter avec une autre personne.")
+            print("0- Quitter.")
+            rep = self.saisir_nombre(0,2)
+
+        a_gagne = -1
+        iterator = cycle([0,1])
+        self.joueur_courant = next(iterator)
+        if rep==2:
+            self.joueurs=[Joueur('User','Personne','X'),Joueur('Kasper','Ordinateur','O')]
+            while (1):
+                self.tour(rep)
+                for i in range(0,2):
+                    if self.plateau.est_gagnant(self.joueurs[i].pion):
+                        a_gagne= i
+                        break
+                if not self.plateau.non_plein():
+                    a_gagne=2
+                if a_gagne!=-1:
+                    break
+                self.joueur_courant = next(iterator)
+
+            self.clean_print_plateau("Jeu Termine\n")
+            if a_gagne!=2:
+                print("\n\n"+self.joueurs[a_gagne].nom +" ("+self.joueurs[a_gagne].pion+ ") A Gagne")
+            else:
+                print("\n\nPartie nulle")
+                self.nb_parties_nulles+=1
+
+    def clean_print_plateau(self,str):
+        cls()
+        print(str)
+        print(self.plateau)
 
     def saisir_nombre(self, nb_min, nb_max):
         """
@@ -90,6 +130,7 @@ class Partie:
         assert isinstance(nb_min, int), "Partie: nb_min doit être un entier."
         assert isinstance(nb_max, int), "Partie: nb_max doit être un entier."
 
+
         while(1):
             print('Entrez s.v.p un nombre entre ' + str(nb_min) +' et ' + str(nb_max) + ' : ?')
             nb=input()
@@ -97,6 +138,7 @@ class Partie:
                 return (int(nb))
             else:
                 print("*** Valeur incorrecte! ***")
+
 
 
     def demander_forme_pion(self):
@@ -109,12 +151,12 @@ class Partie:
         Returns:
             string: Le catactère saisi par l'utilisateur après validation.
         """
+
         while (1):
             print("Sélectionnez s.v.p la forme de votre pion(X,O)")
             formePion=input()
             if(formePion in {'X','O'}):
                 return formePion
-
 
 #Still not completed
     def tour(self, choix):
@@ -135,7 +177,13 @@ class Partie:
         assert isinstance(choix, int), "Partie: choix doit être un entier."
         assert choix in [1, 2], "Partie: choix doit être 1 ou 2."
 
-        pass
+        self.clean_print_plateau("Tour de "+self.joueurs[self.joueur_courant].nom +"("+self.joueurs[self.joueur_courant].pion+ ")\n\n")
+        ligne=-1
+        colonne=-1
+        case = self.demander_postion()
+        self.plateau.selectionner_case(case[0],case[1],self.joueurs[self.joueur_courant].pion)
+
+
 
     def demander_postion(self):
         """
@@ -154,24 +202,25 @@ class Partie:
                         coordonnées (ligne, colonne) de la case choisie.
         """
 
-
-
-        while(1):
-            print("Numéro de la ligne :")
+        ligne = -1
+        colonne = -1
+        invalide = False
+        while(not self.plateau.position_valide(ligne,colonne)):
+            if invalide:
+                print ('\nCase deja occupée')
+            print('\n\nLigne: ',end='')
             ligne = self.saisir_nombre(0,2)
-            print("Numéro de la colonne :")
+            print('Colonne: ',end='')
             colonne = self.saisir_nombre(0,2)
-            if(self.plateau.position_valide(ligne,colonne)):
-                return({'ligne':ligne,'colonne':colonne})
+            invalide = True
+        return ligne,colonne
 
+# Permet d'effacer le contenu de la console (cross-platform)
+def cls():
+    os.system('cls' if os.name=='nt' else 'clear')
 
 if __name__ == "__main__":
     # Point d'entrée du programme.
     # On initialise une nouvelle partie, et on appelle la méthode jouer().
     partie = Partie()
     partie.jouer()
-    print("All")
-    plat = Plateau()
-    print(partie.demander_postion())
-
-    print(plat)

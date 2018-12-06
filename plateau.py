@@ -166,3 +166,8 @@ class Plateau:
         assert pion in ["O", "X"], "Plateau: pion doit être 'O' ou 'X'."
 
         pass
+def non_plein(dic):
+    return all(e !='x' and e!='a' for e in dic.values())
+if __name__ == "__main__":
+    dic= {0:'X',1:'a'}
+    print(non_plein(dic))
