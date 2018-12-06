@@ -106,8 +106,26 @@ class Partie:
                 print("\n\nPartie nulle")
                 self.nb_parties_nulles+=1
 
+        if rep==1:
+            print("Saisir votre nom buddy: \n")
+            name=input()
+            pion=demander_forme_pion()
+            if(pion='X'):
+                sPion='O'
+            else:
+                sPion='X'
+
+            self.joueurs=[Joueur(name,'Personne',pion),Joueur('Colosse','Ordinateur',sPion)]
+            while(1):
+                self.tour(rep)
+                while(self.plateau.non_plein()):
+
+
+
+
+
     def clean_print_plateau(self,str):
-        cls()
+        #cls()
         print(str)
         print(self.plateau)
 
@@ -130,7 +148,24 @@ class Partie:
         assert isinstance(nb_min, int), "Partie: nb_min doit être un entier."
         assert isinstance(nb_max, int), "Partie: nb_max doit être un entier."
 
+<<<<<<< Updated upstream
 
+=======
+# <<<<<<< HEAD
+#         rep = ""
+#         invalide = False
+#         while (1):
+#             if invalide:
+#                 print("Doit etre un Nombre entre "+str(nb_min)+" et "+str(nb_max))
+#             rep = input()
+#             if rep.isnumeric():
+#                 rep = int(rep)
+#                 if (rep in range(nb_min,nb_max+1)):
+#                     break
+#             invalide = True
+#         return rep
+# =======
+>>>>>>> Stashed changes
         while(1):
             print('Entrez s.v.p un nombre entre ' + str(nb_min) +' et ' + str(nb_max) + ' : ?')
             nb=input()
@@ -138,7 +173,10 @@ class Partie:
                 return (int(nb))
             else:
                 print("*** Valeur incorrecte! ***")
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
 
 
     def demander_forme_pion(self):
@@ -151,6 +189,13 @@ class Partie:
         Returns:
             string: Le catactère saisi par l'utilisateur après validation.
         """
+<<<<<<< Updated upstream
+=======
+        rep =''
+        while rep.upper()=='O' and rep.upper()=='N':
+            rep=input()
+        return rep
+>>>>>>> Stashed changes
 
         while (1):
             print("Sélectionnez s.v.p la forme de votre pion(X,O)")
@@ -158,7 +203,13 @@ class Partie:
             if(formePion in {'X','O'}):
                 return formePion
 
+<<<<<<< Updated upstream
 #Still not completed
+=======
+
+
+
+>>>>>>> Stashed changes
     def tour(self, choix):
         """
         Permet d'exécuter le tour d'un joueur (une personne ou un ordinateur).
@@ -180,7 +231,10 @@ class Partie:
         self.clean_print_plateau("Tour de "+self.joueurs[self.joueur_courant].nom +"("+self.joueurs[self.joueur_courant].pion+ ")\n\n")
         ligne=-1
         colonne=-1
-        case = self.demander_postion()
+        if(choix==1):
+            case=self.plateau.choisir_prochaine_case(self.joueurs[3])
+        else:
+            case = self.demander_postion()
         self.plateau.selectionner_case(case[0],case[1],self.joueurs[self.joueur_courant].pion)
 
 
@@ -215,12 +269,38 @@ class Partie:
             invalide = True
         return ligne,colonne
 
+<<<<<<< Updated upstream
 # Permet d'effacer le contenu de la console (cross-platform)
 def cls():
     os.system('cls' if os.name=='nt' else 'clear')
+=======
+# # Permet d'effacer le contenu de la console (cross-platform)
+# def cls():
+#     os.system('cls' if os.name=='nt' else 'clear')
+#
+#
+#
+#
+#     while(1):
+#             print("Numéro de la ligne :")
+#             ligne = self.saisir_nombre(0,2)
+#             print("Numéro de la colonne :")
+#             colonne = self.saisir_nombre(0,2)
+#             if(self.plateau.position_valide(ligne,colonne)):
+#                 return({'ligne':ligne,'colonne':colonne})
+#
+
+>>>>>>> Stashed changes
 
 if __name__ == "__main__":
     # Point d'entrée du programme.
     # On initialise une nouvelle partie, et on appelle la méthode jouer().
     partie = Partie()
     partie.jouer()
+
+
+    print("All")
+    plat = Plateau()
+    partie.jouer()
+
+    print(plat)

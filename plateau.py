@@ -164,8 +164,106 @@ class Plateau:
         """
         assert isinstance(pion, str), "Plateau: pion doit être une chaîne de caractères."
         assert pion in ["O", "X"], "Plateau: pion doit être 'O' ou 'X'."
+        if(pion=='X'):
+            myPion='O'
+        else
+            mypion='X'
+        nb=0
+        #check if Pc can win
+        #check line
+        for i in range(0,3):
+            if(nb==2):
+                break;
+            for j in range(0,3):
+                if(self.case[i,j]==''):
+                    ligne=i
+                    column=j
+                elif(self.case[i,j]==myPion):
+                    nb++
+        if nb==2:
+            return (ligne,column)
+        nb=0
+        #check column
+        for i in range(0,3):
+            if(nb==2):
+                break;
+            for j in range(0,3):
+                if(self.case[j,i]==''):
+                    ligne=i
+                    column=j
+                elif(self.case[j,i]==myPion):
+                    nb++
+        if nb==2:
+            return (ligne,column)
+        #Check RightDiagonal
+        nb=0
+        for i in range(0,3):
+            if(nb==2):
+                break;
+            if(self.case[i,i]==''):
+                ligne=i
+                column=i
+            elif(self.case[i,j]==myPion):
+                    nb++
+        if nb==2:
+            return (ligne,column)
+        #Check LeftDiagonal
+        nb=0
+        for i in range(0,3):
+            if(nb==2):
+                break;
+            if(self.case[i,2-i]==''):
+                ligne=i
+                column=2-i
+            elif(self.case[i,2-i]==myPion):
+                    nb++
+        if nb==2:
+            return (ligne,column)
+        #Check for tie
+        #check column
+        for i in range(0,3):
+            if(nb==2):
+                break;
+            for j in range(0,3):
+                if(self.case[j,i]==''):
+                    ligne=i
+                    column=j
+                elif(self.case[j,i]==pion):
+                    nb++
+        if nb==2:
+            return (ligne,column)
+        #Check RightDiagonal
+        nb=0
+        for i in range(0,3):
+            if(nb==2):
+                break;
+            if(self.case[i,i]==''):
+                ligne=i
+                column=i
+            elif(self.case[i,j]==pion):
+                    nb++
+        if nb==2:
+            return (ligne,column)
+        #Check LeftDiagonal
+        nb=0
+        for i in range(0,3):
+            if(nb==2):
+                break;
+            if(self.case[i,2-i]==''):
+                ligne=i
+                column=2-i
+            elif(self.case[i,2-i]==pion):
+                    nb++
+        if nb==2:
+            return (ligne,column)
+        test=False
+        while(!test):
+            ligne= randrange(0,3)
+            column= randrange(0,3)
+            if(self.position_valide(ligne,column)):
+                test=True
+        return(ligne,column)
 
-        pass
 def non_plein(dic):
     return all(e !='x' and e!='a' for e in dic.values())
 if __name__ == "__main__":
