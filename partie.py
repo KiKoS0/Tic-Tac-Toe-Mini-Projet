@@ -74,7 +74,7 @@ class Partie:
         """
 
 
-        rep = 2
+        rep = 1
         while(0):
             print('---------------Menu---------------')
             print("1- Jouer avec l'ordinateur.")
@@ -85,7 +85,7 @@ class Partie:
         a_gagne = -1
         iterator = cycle([0,1])
         self.joueur_courant = next(iterator)
-        if rep==2:
+        if rep==1:
             self.joueurs=[Joueur('User','Personne','X'),Joueur('Kasper','Ordinateur','O')]
             while (1):
                 self.tour(rep)
@@ -130,18 +130,15 @@ class Partie:
         assert isinstance(nb_min, int), "Partie: nb_min doit être un entier."
         assert isinstance(nb_max, int), "Partie: nb_max doit être un entier."
 
-        rep = ""
-        invalide = False
-        while (1):
-            if invalide:
-                print("Doit etre un Nombre entre "+str(nb_min)+" et "+str(nb_max))
-            rep = input()
-            if rep.isnumeric():
-                rep = int(rep)
-                if (rep in range(nb_min,nb_max+1)):
-                    break
-            invalide = True
-        return rep
+
+        while(1):
+            print('Entrez s.v.p un nombre entre ' + str(nb_min) +' et ' + str(nb_max) + ' : ?')
+            nb=input()
+            if (((nb.isnumeric()) and (int(nb)>=nb_min) and (int(nb)<=nb_max) )) :
+                return (int(nb))
+            else:
+                print("*** Valeur incorrecte! ***")
+
 
 
     def demander_forme_pion(self):
@@ -154,10 +151,13 @@ class Partie:
         Returns:
             string: Le catactère saisi par l'utilisateur après validation.
         """
-        rep =""
-        while rep.upper()=='O' and rep.upper()=='N':
-            rep=input()
-        return rep
+
+        while (1):
+            print("Sélectionnez s.v.p la forme de votre pion(X,O)")
+            formePion=input()
+            if(formePion in {'X','O'}):
+                return formePion
+
 
     def tour(self, choix):
         """
@@ -180,7 +180,10 @@ class Partie:
         self.clean_print_plateau("Tour de "+self.joueurs[self.joueur_courant].nom +"("+self.joueurs[self.joueur_courant].pion+ ")\n\n")
         ligne=-1
         colonne=-1
-        case = self.demander_postion()
+        if (choix==2):
+    	    case = self.demander_postion()
+        else:
+            case=self.plateau.choisir_prochaine_case(self.joueurs[self.joueur_courant].pion)
         self.plateau.selectionner_case(case[0],case[1],self.joueurs[self.joueur_courant].pion)
 
 
@@ -201,6 +204,7 @@ class Partie:
             (int,int):  Une paire d'entiers représentant les
                         coordonnées (ligne, colonne) de la case choisie.
         """
+
         ligne = -1
         colonne = -1
         invalide = False
@@ -217,6 +221,7 @@ class Partie:
 # Permet d'effacer le contenu de la console (cross-platform)
 def cls():
     os.system('cls' if os.name=='nt' else 'clear')
+
 if __name__ == "__main__":
     # Point d'entrée du programme.
     # On initialise une nouvelle partie, et on appelle la méthode jouer().
