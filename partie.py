@@ -3,7 +3,6 @@ __date__ = "Ajoutez la date de remise"
 
 """Ce fichier permet de...(complétez la description de ce que
 ce fichier est supposé faire ! """
-
 from plateau import Plateau
 from joueur import Joueur
 
