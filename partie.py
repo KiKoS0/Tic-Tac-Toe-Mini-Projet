@@ -34,7 +34,7 @@ class Partie:
                                     # Pendant le jeu et à chaque tour d'un joueur,
                                     # il faut affecter à cet attribut ce joueur courant.
         self.nb_parties_nulles = 0  # Le nombre de parties nulles (aucun joueur n'a gagné).
-#Still not completed
+
     def jouer(self):
         """
         Permet de démarrer la partie en commençant par l'affichage de ce texte:
@@ -74,7 +74,7 @@ class Partie:
         """
 
 
-        rep = 2
+        rep = 1
         while(0):
             print('---------------Menu---------------')
             print("1- Jouer avec l'ordinateur.")
@@ -85,7 +85,7 @@ class Partie:
         a_gagne = -1
         iterator = cycle([0,1])
         self.joueur_courant = next(iterator)
-        if rep==2:
+        if rep==1:
             self.joueurs=[Joueur('User','Personne','X'),Joueur('Kasper','Ordinateur','O')]
             while (1):
                 self.tour(rep)
@@ -158,7 +158,7 @@ class Partie:
             if(formePion in {'X','O'}):
                 return formePion
 
-#Still not completed
+
     def tour(self, choix):
         """
         Permet d'exécuter le tour d'un joueur (une personne ou un ordinateur).
@@ -180,7 +180,10 @@ class Partie:
         self.clean_print_plateau("Tour de "+self.joueurs[self.joueur_courant].nom +"("+self.joueurs[self.joueur_courant].pion+ ")\n\n")
         ligne=-1
         colonne=-1
-        case = self.demander_postion()
+        if (choix==2):
+    	    case = self.demander_postion()
+        else:
+            case=self.plateau.choisir_prochaine_case(self.joueurs[self.joueur_courant].pion)
         self.plateau.selectionner_case(case[0],case[1],self.joueurs[self.joueur_courant].pion)
 
 

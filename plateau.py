@@ -164,8 +164,44 @@ class Plateau:
         """
         assert isinstance(pion, str), "Plateau: pion doit être une chaîne de caractères."
         assert pion in ["O", "X"], "Plateau: pion doit être 'O' ou 'X'."
+        test=False
+        while(not test):
+            ligne= randrange(0,3)
+            column= randrange(0,3)
+            if(self.position_valide(ligne,column)):
+                test=True
+        #check if Pc can win
+		#check line
+        for ch in range(0,2):
+            liste_vic_line =[[" ",pion,pion],[pion," ",pion],[pion,pion," "]]
+            for i in range(0,3):
+                for k,l in enumerate(liste_vic_line) :
+                   for j in range(0,3) :
+                       if(l[j]!=self.cases[i,j]):
+                           break
+                       return i,k
+            #check column
+            for i in range(0,3):
+                for k,l in enumerate(liste_vic_line) :
+                    for j in range(0,3) :
+                        if(l[j]!=self.cases[j,i]) :
+                            break
+                        return k,i
+            #check Diagonal_gauche
 
-        pass
+            for k,l in enumerate(liste_vic_line) :
+                for j in range(0,3) :
+                    if(l[j]!=self.cases[j,j]):
+                        break
+                    return k,k
+            #check Diagonal_droite
+            for k,l in enumerate(liste_vic_line) :
+                for j in range(0,3) :
+                    if(l[j]!=self.cases[j,2-j]):
+                        break
+                    return k,k
+            pion = 'X' if pion=='O' else 'O'
+        return(ligne,column)
 def non_plein(dic):
     return all(e !='x' and e!='a' for e in dic.values())
 if __name__ == "__main__":
