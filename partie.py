@@ -35,6 +35,8 @@ class Partie:
         self.nb_parties_nulles = 0  # Le nombre de parties nulles (aucun joueur n'a gagné).
 
     def jouer(self):
+
+
         """
         Permet de démarrer la partie en commençant par l'affichage de ce texte:
 
@@ -73,26 +75,40 @@ class Partie:
         """
 
 
-        rep = 1
-        while(0):
-            print('---------------Menu---------------')
-            print("1- Jouer avec l'ordinateur.")
-            print("2- Jouter avec une autre personne.")
-            print("0- Quitter.")
-            rep = self.saisir_nombre(0,2)
 
+        print('---------------Menu---------------')
+        print("1- Jouer avec l'ordinateur.")
+        print("2- Jouter avec une autre personne.")
+        print("0- Quitter.")
+        rep = self.saisir_nombre(0, 2)
+        type = 'Personne'
+        for i in range(0, rep):
+            print("Entrez s.v.p votre nom:? ")
+            name = input()
+            if i==1:
+                break
+            playerPion = self.demander_forme_pion()
+            self.joueurs.append(Joueur(name, type, playerPion))
+        if rep==1:
+            name='Colosse'
+            type='Ordinateur'
+        playerPion = 'X' if playerPion == 'O' else 'O'
+        self.joueurs.append(Joueur(name, type, playerPion))
         a_gagne = -1
         iterator = cycle([0,1])
         self.joueur_courant = next(iterator)
-        if rep==1:
-            self.joueurs=[Joueur('User','Personne','X'),Joueur('Kasper','Ordinateur','O')]
+        if rep in [1, 2]:
+
             while (1):
-                self.tour(rep)
+                if(self.joueurs[self.joueur_courant].type == 'Personne') :
+                    self.tour(2)
+                else :
+                    self.tour(rep)
                 for i in range(0,2):
                     if self.plateau.est_gagnant(self.joueurs[i].pion):
                         a_gagne= i
                         break
-                if not self.plateau.non_plein():
+                if not (self.plateau.non_plein()) and a_gagne == -1:
                     a_gagne=2
                 if a_gagne!=-1:
                     break
@@ -104,6 +120,9 @@ class Partie:
             else:
                 print("\n\nPartie nulle")
                 self.nb_parties_nulles+=1
+        print(self.joueur_courant)
+
+        print("*** Merci et au revoir ! ***")
 
     def clean_print_plateau(self,str):
         cls()
