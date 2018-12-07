@@ -93,7 +93,7 @@ class Partie:
                     if self.plateau.est_gagnant(self.joueurs[i].pion):
                         a_gagne= i
                         break
-                if not self.plateau.non_plein():
+                if not (self.plateau.non_plein()) and a_gagne == -1:
                     a_gagne=2
                 if a_gagne!=-1:
                     break
