@@ -1,15 +1,18 @@
-__authors__ = "Ajoutez les noms des membres de votre équipe!"
-__date__ = "Ajoutez la date de remise"
+__authors__ = "Daghmoura Riadh - El Wardani Ammar"
+__date__ = "09/12/2018"
 
 """
-Ce fichier permet de...(complétez la description de ce que
-ce fichier est supposé faire !
+    Ce fichier represente le tableau de jeu, c'est la seule interface 
+    controlant les cases du jeu, le comportement de l'ordinateur et 
+    detectant la fin du jeu.
 """
 
 from case import Case
-from random import randrange
+from random import randrange, choice
+
 
 class Plateau:
+
     """
     Classe modélisant le plateau du jeu Tic-Tac-Toe.
 
@@ -26,6 +29,8 @@ class Plateau:
         # Dictionnaire de cases.
         # La clé est une position (ligne, colonne), et la valeur est une instance de la classe Case.
         self.cases = {}
+
+        self.difficulte = None
 
         # Appel d'une méthode qui initialise un plateau contenant des cases vides.
         self.initialiser()
@@ -99,7 +104,7 @@ class Plateau:
         assert isinstance(ligne, int), "Plateau: ligne doit être un entier."
         assert isinstance(colonne, int), "Plateau: colonne doit être un entier."
 
-        if(ligne not in range(0,3) or colonne not in range(0,3)):
+        if ligne not in range(0,3) or colonne not in range(0,3):
             return False
         return self.cases[ligne,colonne].est_vide()
 
@@ -119,7 +124,7 @@ class Plateau:
         assert isinstance(pion, str), "Plateau: pion doit être une chaîne de caractères."
         assert pion in ["O", "X"], "Plateau: pion doit être 'O' ou 'X'."
 
-        self.cases[ligne,colonne] = Case(pion)
+        self.cases[ligne, colonne] = Case(pion)
 
 
     def est_gagnant(self, pion):
@@ -141,6 +146,7 @@ class Plateau:
                       [(0,0),(1,0),(2,0)],[(0,1),(1,1),(2,1)],[(0,2),(1,2),(2,2)],
                       [(0,0),(1,1),(2,2)],[(0,2),(1,1),(2,0)]]
         return any(all(self.cases[j].est_pion(pion) for j in regle) for regle in regles_vic)
+
 
     def choisir_prochaine_case(self, pion):
         """
@@ -165,4 +171,188 @@ class Plateau:
         assert isinstance(pion, str), "Plateau: pion doit être une chaîne de caractères."
         assert pion in ["O", "X"], "Plateau: pion doit être 'O' ou 'X'."
 
-        pass
+        # Choix du bot qui va jouer avec la difficulté choisie au debut
+        if (self.difficulte==2):
+            bot = MinMaxBot()
+            return bot.play(self.cases, pion)
+        # Choisir une case au hasard
+        test=False
+        while(not test):
+            ligne= randrange(0,3)
+            column= randrange(0,3)
+            if(self.position_valide(ligne,column)):
+                test=True
+        # Tester si le bot peut gagner ou empecher l'adversaire de gagner
+        for x in range(0,2) :
+                liste_vic_line =[[' ',pion,pion],[pion,' ',pion],[pion,pion,' ']]
+                for i in range(0,3):
+                # Verifier les lignes
+                    for k,l in enumerate(liste_vic_line) :
+                       test = True
+                       for j in range(0,3) :
+                           if(l[j] != self.cases[i,j].contenu):
+                               test=False
+                       if test:
+                            return i,k
+                test=True
+                # Verifier les colonnes
+                for i in range(0,3):
+
+                    for k,l in enumerate(liste_vic_line) :
+                        test = True
+                        for j in range(0,3) :
+                            if(l[j]!=self.cases[j,i].contenu):
+                                test=False
+                        if test:
+                            return k,i
+                test=True
+                # Verifier la diagonale gauche
+                for k,l in enumerate(liste_vic_line):
+                    test = True
+                    for j in range(0,3) :
+
+                        if(l[j]!=self.cases[j,j].contenu):
+                            test=False
+                    if test:
+                        return k,k
+                test=True
+                # Verifier la diagonale droite
+                for k,l in enumerate(liste_vic_line):
+                    test = True
+                    for j in range(0,3) :
+                        if(l[j]!=self.cases[j,2-j].contenu):
+                            test=False
+                    if test:
+                        return k,k
+                test = True
+                pion = 'X' if pion=='O' else 'O'
+
+        return(ligne,column)
+
+
+# class helpers ( supposé etre dans un autre fichier mais c'est contre les règles)
+
+
+X = 'X'
+O = 'O'
+Vide = ' '
+
+regles_vic_convertie = ([0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6])
+
+conversion_plateau_index = {0:(0, 0), 1:(0, 1), 2:(0, 2), 3:(1, 0), 4:(1, 1), 5:(1, 2), 6:(2, 0), 7:(2, 1), 8:(2, 2)}
+
+
+def get_contre(car):
+    if car is X: return O
+    return X
+
+
+def get_coups_possibles(plat):
+    a=[Item for Item, Value in enumerate(plat) if Value is Vide]
+    return a
+
+def conversion_plateau(plat):
+    newPlat = []
+    for i in range(0, 3):
+        for j in range(0, 3):
+            newPlat.append(plat[i, j].contenu)
+    return newPlat
+
+class MinMaxBot:
+    def __init__(self):
+        self.plateau = None
+        self.pion = None
+        self.adversaire = None
+        self.jeu_finie = False
+        self.base_score = None
+
+    def play(self, Plat, Pion):
+        # reinitialize this turn properties
+        self.plateau = conversion_plateau(Plat)
+        self.pion = Pion
+        self.adversaire = get_contre(Pion)
+        valeur_min = -9999
+        meilleurs_coups = []
+        self.base_score = len(get_coups_possibles(self.plateau))
+        if self.base_score is 9:
+            return conversion_plateau_index[4]
+        for coup in get_coups_possibles(self.plateau):
+            self.select_case(coup, Pion)
+            valeur_coup = self.meilleur_coup(get_contre(Pion), -(self.base_score + 1), self.base_score + 1, 0)
+            self.select_case(coup, Vide)
+            if valeur_coup > valeur_min:
+                valeur_min = valeur_coup
+                meilleurs_coups = [coup]
+            elif valeur_coup == valeur_min:
+                meilleurs_coups.append(coup)
+        return conversion_plateau_index[choice(meilleurs_coups)]
+
+    def a_gagne(self):
+        for pion in ('X', 'O'):
+            Moves = [Move for Move, Value in enumerate(self.plateau) if Value == pion]
+            for WinningState in regles_vic_convertie:
+                winner = True
+                for Move in WinningState:
+                    if Move not in Moves:
+                        winner = False
+                if winner:
+                    if pion is self.pion:
+                        self.jeu_finie = True
+                        return self.pion
+                    elif pion is self.adversaire:
+                        self.jeu_finie = True
+                        return self.adversaire
+        Items = len([Item for Item, Value in enumerate(self.plateau) if Value != Vide])
+        if Items is 9:
+            self.jeu_finie = True
+            return 'Draw'
+        return None
+
+
+    def select_case(self, position, pion):
+        self.plateau[position] = pion
+
+    def meilleur_coup(self, pion, borne_inf, borne_sup, profondeur=0):
+        gagnant = self.a_gagne()
+        if self.jeu_finie:
+            if gagnant is self.pion:
+                return self.base_score - profondeur
+            elif gagnant is self.adversaire:
+                return profondeur - self.base_score
+            elif gagnant is 'Draw':
+                return 0
+        for coup in get_coups_possibles(self.plateau):
+            self.select_case(coup, pion)
+            valeur_coup = self.meilleur_coup(get_contre(pion), borne_inf, borne_sup, profondeur + 1)
+            self.select_case(coup, Vide)
+            if pion == self.pion:
+                if valeur_coup > borne_inf:
+                    borne_inf = valeur_coup
+                if borne_inf >= borne_sup:
+                    return borne_sup
+            else:
+                if valeur_coup < borne_sup:
+                    borne_sup = valeur_coup
+                if borne_sup <= borne_inf:
+                    return borne_inf
+        if pion == self.pion:
+            return borne_inf
+        else:
+            return borne_sup
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,11 +1,19 @@
-__authors__ = "Ajoutez les noms des membres de votre équipe!"
-__date__ = "Ajoutez la date de remise"
+__authors__ = "Daghmoura Riadh - El Wardani Ammar"
+__date__ = "09/12/2018"
 
-"""Ce fichier permet de...(complétez la description de ce que
-ce fichier est supposé faire ! """
-
+"""
+    Ce fichier permet de controler la partie de jeu en commencant 
+    par demander les informations nécessaires pour jouer, alterner 
+    les tours des joueurs, demander a la classe plateau si le jeu est terminé,
+    afficher le jeu et de recommencer si l'utilisateur l'a demandé
+"""
 from plateau import Plateau
 from joueur import Joueur
+
+
+import os
+from itertools import cycle
+
 
 class Partie:
     """
@@ -32,6 +40,7 @@ class Partie:
         self.nb_parties_nulles = 0  # Le nombre de parties nulles (aucun joueur n'a gagné).
 
     def jouer(self):
+
         """
         Permet de démarrer la partie en commençant par l'affichage de ce texte:
 
@@ -69,7 +78,88 @@ class Partie:
         ***Merci et au revoir !***
         """
 
-        pass
+
+        # Affichage menu principal
+        print('---------------Menu---------------')
+        print("1- Jouer avec l'ordinateur.")
+        print("2- Jouter avec une autre personne.")
+        print("0- Quitter.")
+        rep = self.saisir_nombre(0, 2)
+        if rep==0:
+            print("*** Merci et au revoir ! ***")
+            return
+        # Entrée des informations sur les joueurs
+        type = 'Personne'
+        for i in range(0, rep):
+            print("Entrez s.v.p votre nom:? ")
+            name = input()
+            if i==1:
+                break
+            playerPion = self.demander_forme_pion()
+            self.joueurs.append(Joueur(name, type, playerPion))
+        if rep==1:
+            # Choix de la difficulté
+            print('---------------Difficulté---------------')
+            print("1- Normal.")
+            print("2- Imbattable.")
+            self.plateau.difficulte = self.saisir_nombre(1,2)
+            name = 'Colosse'
+            type = 'Ordinateur'
+        # Initialisation des données de joueurs
+        playerPion = 'X' if playerPion == 'O' else 'O'
+        self.joueurs.append(Joueur(name, type, playerPion))
+        a_gagne = -1
+        alternateur = cycle([0,1])
+        self.joueur_courant = next(alternateur)
+        rejouer = 1
+        if rep in [1, 2]:
+            while(rejouer==1):
+                while (True):
+                    # Jouer les tours des joueurs
+                    if(self.joueurs[self.joueur_courant].type == 'Personne') :
+                        self.tour(2)
+                    else :
+                        self.tour(rep)
+                    # Detection d'un gagnant
+                    for i in range(0,2):
+                        if self.plateau.est_gagnant(self.joueurs[i].pion):
+                            a_gagne= i
+                            break
+                    # Detection d'une partie nulle
+                    if not (self.plateau.non_plein()) and a_gagne == -1:
+                        a_gagne=2
+                    if a_gagne!=-1:
+                        break
+                    # Alterner le tour
+                    self.joueur_courant = next(alternateur)
+
+                self.clean_print_plateau("Jeu Termine\n")
+                if a_gagne!=2:
+                    self.joueurs[a_gagne].gagne()
+                    print("\n\n"+self.joueurs[a_gagne].nom +" ("+self.joueurs[a_gagne].pion+ ") A Gagne")
+                else:
+                    print("\n\nPartie nulle")
+                    self.nb_parties_nulles+=1
+                # Affichage des statistiques
+                print("\n"+ "Partie gagne par "+self.joueurs[0].nom+": "+str(self.joueurs[0].nb_parties_gagnees))
+                print("Partie gagne par " + self.joueurs[1].nom + ": " + str(self.joueurs[1].nb_parties_gagnees))
+                print("Partie nulle: " +str(self.nb_parties_nulles))
+                # Recommencer ??
+                print("\nVoulez vous recommencer? (0 (non),1 (oui))")
+                rejouer = self.saisir_nombre(0,1)
+                if rejouer==1:
+                    # Reinitialsation pour recommencer
+                    self.plateau = Plateau()
+                    alternateur = cycle([0, 1])
+                    self.joueur_courant = next(alternateur)
+                    a_gagne=-1
+
+        print("*** Merci et au revoir ! ***")
+
+    def clean_print_plateau(self,str):
+        clear_screen()
+        print(str)
+        print(self.plateau)
 
     def saisir_nombre(self, nb_min, nb_max):
         """
@@ -90,7 +180,15 @@ class Partie:
         assert isinstance(nb_min, int), "Partie: nb_min doit être un entier."
         assert isinstance(nb_max, int), "Partie: nb_max doit être un entier."
 
-        pass
+        while(True):
+            print('Entrez s.v.p un nombre entre ' + str(nb_min) +' et ' + str(nb_max) + ' : ?')
+            nb=input()
+            if (((nb.isnumeric()) and (int(nb)>=nb_min) and (int(nb)<=nb_max) )) :
+                return (int(nb))
+            else:
+                print("*** Valeur incorrecte! ***")
+
+
 
     def demander_forme_pion(self):
         """
@@ -102,8 +200,12 @@ class Partie:
         Returns:
             string: Le catactère saisi par l'utilisateur après validation.
         """
+        while (True):
+            print("Sélectionnez s.v.p la forme de votre pion(X,O)")
+            formePion=input()
+            if(formePion in {'X','O'}):
+                return formePion
 
-        pass
 
     def tour(self, choix):
         """
@@ -123,7 +225,15 @@ class Partie:
         assert isinstance(choix, int), "Partie: choix doit être un entier."
         assert choix in [1, 2], "Partie: choix doit être 1 ou 2."
 
-        pass
+        self.clean_print_plateau("Tour de "+self.joueurs[self.joueur_courant].nom +"("+self.joueurs[self.joueur_courant].pion+ ")\n\n")
+
+        if (choix==2):
+    	    case = self.demander_postion()
+        else:
+            case = self.plateau.choisir_prochaine_case(self.joueurs[self.joueur_courant].pion)
+
+        self.plateau.selectionner_case(case[0],case[1],self.joueurs[self.joueur_courant].pion)
+
 
     def demander_postion(self):
         """
@@ -141,12 +251,28 @@ class Partie:
             (int,int):  Une paire d'entiers représentant les
                         coordonnées (ligne, colonne) de la case choisie.
         """
+        ligne = -1
+        colonne = -1
+        invalide = False
+        while(not self.plateau.position_valide(ligne,colonne)):
+            if invalide:
+                print ('\nCase deja occupée')
+            print('\n\nLigne: ',end='')
+            ligne = self.saisir_nombre(0,2)
+            print('Colonne: ',end='')
+            colonne = self.saisir_nombre(0,2)
+            invalide = True
+        return ligne,colonne
 
-        pass
+
+
+# Permet d'effacer le contenu de la console (cross-platform)
+def clear_screen():
+    os.system('cls' if os.name=='nt' else 'clear')
+
 
 if __name__ == "__main__":
     # Point d'entrée du programme.
     # On initialise une nouvelle partie, et on appelle la méthode jouer().
     partie = Partie()
     partie.jouer()
-

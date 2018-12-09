@@ -1,5 +1,5 @@
-__author__ = 'M. Bouden'
-__date__ = "Automne 2018"
+__authors__ = "Daghmoura Riadh - El Wardani Ammar"
+__date__ = "09/12/2018"
 
 """Ce fichier permet de définir la classe Joueur permettant de jouer au jeu Tic-Tac-Toe"""
 
@@ -33,3 +33,7 @@ class Joueur:
         self.type = type    # Type du joueur ("Personne" ou "Ordinateur").
         self.pion = pion    # Forme du pion affecté au joueur.
         self.nb_parties_gagnees = 0 # Nombre de parties gagnées par le joueur.
+
+
+    def gagne(self):
+        self.nb_parties_gagnees+=1
