@@ -84,9 +84,11 @@ class Partie:
         print("1- Jouer avec l'ordinateur.")
         print("2- Jouter avec une autre personne.")
         print("0- Quitter.")
-
-        # Entrée des informations sur les joueurs
         rep = self.saisir_nombre(0, 2)
+        if rep==0:
+            print("*** Merci et au revoir ! ***")
+            return
+        # Entrée des informations sur les joueurs
         type = 'Personne'
         for i in range(0, rep):
             print("Entrez s.v.p votre nom:? ")
