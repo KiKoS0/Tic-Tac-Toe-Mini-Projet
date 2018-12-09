@@ -41,7 +41,6 @@ class Partie:
 
     def jouer(self):
 
-
         """
         Permet de démarrer la partie en commençant par l'affichage de ce texte:
 
@@ -80,11 +79,13 @@ class Partie:
         """
 
 
-
+        # Affichage menu principal
         print('---------------Menu---------------')
         print("1- Jouer avec l'ordinateur.")
         print("2- Jouter avec une autre personne.")
         print("0- Quitter.")
+
+        # Entrée des informations sur les joueurs
         rep = self.saisir_nombre(0, 2)
         type = 'Personne'
         for i in range(0, rep):
@@ -95,34 +96,40 @@ class Partie:
             playerPion = self.demander_forme_pion()
             self.joueurs.append(Joueur(name, type, playerPion))
         if rep==1:
+            # Choix de la difficulté
             print('---------------Difficulté---------------')
             print("1- Normal.")
             print("2- Imbattable.")
             self.plateau.difficulte = self.saisir_nombre(1,2)
-            name='Colosse'
-            type='Ordinateur'
+            name = 'Colosse'
+            type = 'Ordinateur'
+        # Initialisation des données de joueurs
         playerPion = 'X' if playerPion == 'O' else 'O'
         self.joueurs.append(Joueur(name, type, playerPion))
         a_gagne = -1
-        iterator = cycle([0,1])
-        self.joueur_courant = next(iterator)
+        alternateur = cycle([0,1])
+        self.joueur_courant = next(alternateur)
         rejouer = 1
         if rep in [1, 2]:
             while(rejouer==1):
-                while (1):
+                while (True):
+                    # Jouer les tours des joueurs
                     if(self.joueurs[self.joueur_courant].type == 'Personne') :
                         self.tour(2)
                     else :
                         self.tour(rep)
+                    # Detection d'un gagnant
                     for i in range(0,2):
                         if self.plateau.est_gagnant(self.joueurs[i].pion):
                             a_gagne= i
                             break
+                    # Detection d'une partie nulle
                     if not (self.plateau.non_plein()) and a_gagne == -1:
                         a_gagne=2
                     if a_gagne!=-1:
                         break
-                    self.joueur_courant = next(iterator)
+                    # Alterner le tour
+                    self.joueur_courant = next(alternateur)
 
                 self.clean_print_plateau("Jeu Termine\n")
                 if a_gagne!=2:
@@ -131,23 +138,24 @@ class Partie:
                 else:
                     print("\n\nPartie nulle")
                     self.nb_parties_nulles+=1
-
+                # Affichage des statistiques
                 print("\n"+ "Partie gagne par "+self.joueurs[0].nom+": "+str(self.joueurs[0].nb_parties_gagnees))
                 print("Partie gagne par " + self.joueurs[1].nom + ": " + str(self.joueurs[1].nb_parties_gagnees))
                 print("Partie nulle: " +str(self.nb_parties_nulles))
-
+                # Recommencer ??
                 print("\nVoulez vous recommencer? (0 (non),1 (oui))")
                 rejouer = self.saisir_nombre(0,1)
                 if rejouer==1:
+                    # Reinitialsation pour recommencer
                     self.plateau = Plateau()
-                    iterator = cycle([0, 1])
-                    self.joueur_courant = next(iterator)
+                    alternateur = cycle([0, 1])
+                    self.joueur_courant = next(alternateur)
                     a_gagne=-1
 
         print("*** Merci et au revoir ! ***")
 
     def clean_print_plateau(self,str):
-        cls()
+        clear_screen()
         print(str)
         print(self.plateau)
 
@@ -170,8 +178,7 @@ class Partie:
         assert isinstance(nb_min, int), "Partie: nb_min doit être un entier."
         assert isinstance(nb_max, int), "Partie: nb_max doit être un entier."
 
-
-        while(1):
+        while(True):
             print('Entrez s.v.p un nombre entre ' + str(nb_min) +' et ' + str(nb_max) + ' : ?')
             nb=input()
             if (((nb.isnumeric()) and (int(nb)>=nb_min) and (int(nb)<=nb_max) )) :
@@ -191,8 +198,7 @@ class Partie:
         Returns:
             string: Le catactère saisi par l'utilisateur après validation.
         """
-
-        while (1):
+        while (True):
             print("Sélectionnez s.v.p la forme de votre pion(X,O)")
             formePion=input()
             if(formePion in {'X','O'}):
@@ -226,6 +232,7 @@ class Partie:
 
         self.plateau.selectionner_case(case[0],case[1],self.joueurs[self.joueur_courant].pion)
 
+
     def demander_postion(self):
         """
         Permet de demander à l'utilisateur les coordonnées de la case qu'il veut jouer.
@@ -242,7 +249,6 @@ class Partie:
             (int,int):  Une paire d'entiers représentant les
                         coordonnées (ligne, colonne) de la case choisie.
         """
-
         ligne = -1
         colonne = -1
         invalide = False
@@ -256,9 +262,12 @@ class Partie:
             invalide = True
         return ligne,colonne
 
+
+
 # Permet d'effacer le contenu de la console (cross-platform)
-def cls():
+def clear_screen():
     os.system('cls' if os.name=='nt' else 'clear')
+
 
 if __name__ == "__main__":
     # Point d'entrée du programme.
