@@ -104,7 +104,7 @@ class Plateau:
         assert isinstance(ligne, int), "Plateau: ligne doit être un entier."
         assert isinstance(colonne, int), "Plateau: colonne doit être un entier."
 
-        if(ligne not in range(0,3) or colonne not in range(0,3)):
+        if ligne not in range(0,3) or colonne not in range(0,3):
             return False
         return self.cases[ligne,colonne].est_vide()
 
@@ -124,7 +124,7 @@ class Plateau:
         assert isinstance(pion, str), "Plateau: pion doit être une chaîne de caractères."
         assert pion in ["O", "X"], "Plateau: pion doit être 'O' ou 'X'."
 
-        self.cases[ligne,colonne] = Case(pion)
+        self.cases[ligne, colonne] = Case(pion)
 
 
     def est_gagnant(self, pion):
@@ -146,6 +146,7 @@ class Plateau:
                       [(0,0),(1,0),(2,0)],[(0,1),(1,1),(2,1)],[(0,2),(1,2),(2,2)],
                       [(0,0),(1,1),(2,2)],[(0,2),(1,1),(2,0)]]
         return any(all(self.cases[j].est_pion(pion) for j in regle) for regle in regles_vic)
+
 
     def choisir_prochaine_case(self, pion):
         """
@@ -170,25 +171,22 @@ class Plateau:
         assert isinstance(pion, str), "Plateau: pion doit être une chaîne de caractères."
         assert pion in ["O", "X"], "Plateau: pion doit être 'O' ou 'X'."
 
+        # Choix du bot qui va jouer avec la difficulté choisie au debut
         if (self.difficulte==2):
             bot = MinMaxBot()
             return bot.play(self.cases, pion)
-
+        # Choisir une case au hasard
         test=False
-
         while(not test):
             ligne= randrange(0,3)
             column= randrange(0,3)
             if(self.position_valide(ligne,column)):
                 test=True
-        #check if Pc can win
-		#check line
+        # Tester si le bot peut gagner ou empecher l'adversaire de gagner
         for x in range(0,2) :
-           # I think mehoush 9a3ed y checki fel tie 
-
                 liste_vic_line =[[' ',pion,pion],[pion,' ',pion],[pion,pion,' ']]
                 for i in range(0,3):
-
+                # Verifier les lignes
                     for k,l in enumerate(liste_vic_line) :
                        test = True
                        for j in range(0,3) :
@@ -197,7 +195,7 @@ class Plateau:
                        if test:
                             return i,k
                 test=True
-                #check column
+                # Verifier les colonnes
                 for i in range(0,3):
 
                     for k,l in enumerate(liste_vic_line) :
@@ -208,8 +206,7 @@ class Plateau:
                         if test:
                             return k,i
                 test=True
-                #check Diagonal_gauche
-
+                # Verifier la diagonale gauche
                 for k,l in enumerate(liste_vic_line):
                     test = True
                     for j in range(0,3) :
@@ -219,7 +216,7 @@ class Plateau:
                     if test:
                         return k,k
                 test=True
-                #check Diagonal_droite
+                # Verifier la diagonale droite
                 for k,l in enumerate(liste_vic_line):
                     test = True
                     for j in range(0,3) :
@@ -227,118 +224,121 @@ class Plateau:
                             test=False
                     if test:
                         return k,k
-
                 test = True
                 pion = 'X' if pion=='O' else 'O'
 
         return(ligne,column)
 
+
+# class helpers ( supposé etre dans un autre fichier mais c'est contre les règles)
+
+
 X = 'X'
 O = 'O'
-Empty = ' '
+Vide = ' '
 
-regles_vic = ([0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6])
+regles_vic_convertie = ([0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6])
 
-gameboard_conversion = {0:(0,0),1:(0,1),2:(0,2),3:(1,0),4:(1,1),5:(1,2),6:(2,0),7:(2,1),8:(2,2)}
+conversion_plateau_index = {0:(0, 0), 1:(0, 1), 2:(0, 2), 3:(1, 0), 4:(1, 1), 5:(1, 2), 6:(2, 0), 7:(2, 1), 8:(2, 2)}
 
-def GetOpponent(car):
+
+def get_contre(car):
     if car is X: return O
     return X
 
-def GetAvailableMoves(GameBoard):
-    a=[Item for Item, Value in enumerate(GameBoard) if Value is Empty]
+
+def get_coups_possibles(plat):
+    a=[Item for Item, Value in enumerate(plat) if Value is Vide]
     return a
 
-
-def ConvertGameBoard(GameBoard):
-    newGameBoard = []
+def conversion_plateau(plat):
+    newPlat = []
     for i in range(0, 3):
         for j in range(0, 3):
-            newGameBoard.append(GameBoard[i, j].contenu)
-    return newGameBoard
+            newPlat.append(plat[i, j].contenu)
+    return newPlat
 
 class MinMaxBot:
     def __init__(self):
-        self.GameBoard = None
+        self.plateau = None
         self.pion = None
-        self.Opponent = None
-        self.GameEnded = False
+        self.adversaire = None
+        self.jeu_finie = False
         self.base_score = None
 
-    def play(self, GameBoard, Char):
+    def play(self, Plat, Pion):
         # reinitialize this turn properties
-        self.GameBoard = ConvertGameBoard(GameBoard)
-        self.pion = Char
-        self.Opponent = GetOpponent(Char)
-        Least = -9999
-        BestPlay = []
-        self.base_score = len(GetAvailableMoves(self.GameBoard))
+        self.plateau = conversion_plateau(Plat)
+        self.pion = Pion
+        self.adversaire = get_contre(Pion)
+        valeur_min = -9999
+        meilleurs_coups = []
+        self.base_score = len(get_coups_possibles(self.plateau))
         if self.base_score is 9:
-            return gameboard_conversion[4]
-        for Move in GetAvailableMoves(self.GameBoard):
-            self.select_case(Move, Char)
-            Value = self.meilleur_coup(GetOpponent(Char), -(self.base_score + 1), self.base_score + 1, 0)
-            self.select_case(Move, Empty)
-            if Value > Least:
-                Least = Value
-                BestPlay = [Move]
-            elif Value == Least:
-                BestPlay.append(Move)
-        return gameboard_conversion[choice(BestPlay)]
+            return conversion_plateau_index[4]
+        for coup in get_coups_possibles(self.plateau):
+            self.select_case(coup, Pion)
+            valeur_coup = self.meilleur_coup(get_contre(Pion), -(self.base_score + 1), self.base_score + 1, 0)
+            self.select_case(coup, Vide)
+            if valeur_coup > valeur_min:
+                valeur_min = valeur_coup
+                meilleurs_coups = [coup]
+            elif valeur_coup == valeur_min:
+                meilleurs_coups.append(coup)
+        return conversion_plateau_index[choice(meilleurs_coups)]
 
     def a_gagne(self):
-        for Char in ('X', 'O'):
-            Moves = [Move for Move, Value in enumerate(self.GameBoard) if Value == Char]
-            for WinningState in regles_vic:
+        for pion in ('X', 'O'):
+            Moves = [Move for Move, Value in enumerate(self.plateau) if Value == pion]
+            for WinningState in regles_vic_convertie:
                 winner = True
                 for Move in WinningState:
                     if Move not in Moves:
                         winner = False
                 if winner:
-                    if Char is self.pion:
-                        self.GameEnded = True
+                    if pion is self.pion:
+                        self.jeu_finie = True
                         return self.pion
-                    elif Char is self.Opponent:
-                        self.GameEnded = True
-                        return self.Opponent
-        Items = len([Item for Item, Value in enumerate(self.GameBoard) if Value!=Empty])
+                    elif pion is self.adversaire:
+                        self.jeu_finie = True
+                        return self.adversaire
+        Items = len([Item for Item, Value in enumerate(self.plateau) if Value != Vide])
         if Items is 9:
-            self.GameEnded = True
+            self.jeu_finie = True
             return 'Draw'
         return None
 
 
     def select_case(self, position, pion):
-        self.GameBoard[position] = pion
+        self.plateau[position] = pion
 
-    # this algorithm use minimax algorithm with alpha beta pruning
-    def meilleur_coup(self, pion, lower_bound, upper_bound, depth=0):
-        winner = self.a_gagne()
-        if self.GameEnded:
-            if winner is self.pion:
-                return self.base_score-depth
-            elif winner is self.Opponent:
-                return depth-self.base_score
-            elif winner is 'Draw':
+    def meilleur_coup(self, pion, borne_inf, borne_sup, profondeur=0):
+        gagnant = self.a_gagne()
+        if self.jeu_finie:
+            if gagnant is self.pion:
+                return self.base_score - profondeur
+            elif gagnant is self.adversaire:
+                return profondeur - self.base_score
+            elif gagnant is 'Draw':
                 return 0
-        for coup in GetAvailableMoves(self.GameBoard):
+        for coup in get_coups_possibles(self.plateau):
             self.select_case(coup, pion)
-            Value = self.meilleur_coup(GetOpponent(pion), lower_bound, upper_bound, depth + 1)
-            self.select_case(coup, Empty)
+            valeur_coup = self.meilleur_coup(get_contre(pion), borne_inf, borne_sup, profondeur + 1)
+            self.select_case(coup, Vide)
             if pion == self.pion:
-                if Value > lower_bound:
-                    lower_bound = Value
-                if lower_bound >= upper_bound:
-                    return upper_bound
+                if valeur_coup > borne_inf:
+                    borne_inf = valeur_coup
+                if borne_inf >= borne_sup:
+                    return borne_sup
             else:
-                if Value < upper_bound:
-                    upper_bound = Value
-                if upper_bound <= lower_bound:
-                    return lower_bound
+                if valeur_coup < borne_sup:
+                    borne_sup = valeur_coup
+                if borne_sup <= borne_inf:
+                    return borne_inf
         if pion == self.pion:
-            return lower_bound
+            return borne_inf
         else:
-            return upper_bound
+            return borne_sup
 
 
 
