@@ -9,7 +9,7 @@ from joueur import Joueur
 
 import os
 from itertools import cycle
-from bot import MinMaxBot
+
 
 class Partie:
     """
@@ -34,8 +34,6 @@ class Partie:
                                     # Pendant le jeu et à chaque tour d'un joueur,
                                     # il faut affecter à cet attribut ce joueur courant.
         self.nb_parties_nulles = 0  # Le nombre de parties nulles (aucun joueur n'a gagné).
-
-        self.difficulte = None
 
     def jouer(self):
 
@@ -96,7 +94,7 @@ class Partie:
             print('---------------Difficulté---------------')
             print("1- Normal.")
             print("2- Imbattable.")
-            self.difficulte = self.saisir_nombre(1,2)
+            self.plateau.difficulte = self.saisir_nombre(1,2)
             name='Colosse'
             type='Ordinateur'
         playerPion = 'X' if playerPion == 'O' else 'O'
@@ -206,15 +204,10 @@ class Partie:
 
         if (choix==2):
     	    case = self.demander_postion()
-        elif (self.difficulte==2):
-            bot = MinMaxBot()
-            case = bot.play(self.plateau.cases,self.joueurs[self.joueur_courant].pion)
         else:
             case = self.plateau.choisir_prochaine_case(self.joueurs[self.joueur_courant].pion)
 
         self.plateau.selectionner_case(case[0],case[1],self.joueurs[self.joueur_courant].pion)
-
-
 
     def demander_postion(self):
         """
