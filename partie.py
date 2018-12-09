@@ -9,6 +9,7 @@ from joueur import Joueur
 
 import os
 from itertools import cycle
+from bot import MinMaxBot
 
 class Partie:
     """
@@ -198,10 +199,11 @@ class Partie:
         self.clean_print_plateau("Tour de "+self.joueurs[self.joueur_courant].nom +"("+self.joueurs[self.joueur_courant].pion+ ")\n\n")
         ligne=-1
         colonne=-1
+        bot = MinMaxBot()
         if (choix==2):
     	    case = self.demander_postion()
         else:
-            case=self.plateau.choisir_prochaine_case(self.joueurs[self.joueur_courant].pion)
+            case = bot.play(self.plateau.cases,self.joueurs[self.joueur_courant].pion)
         self.plateau.selectionner_case(case[0],case[1],self.joueurs[self.joueur_courant].pion)
 
 
