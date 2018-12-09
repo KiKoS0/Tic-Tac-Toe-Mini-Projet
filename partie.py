@@ -35,6 +35,8 @@ class Partie:
                                     # il faut affecter à cet attribut ce joueur courant.
         self.nb_parties_nulles = 0  # Le nombre de parties nulles (aucun joueur n'a gagné).
 
+        self.difficulte = None
+
     def jouer(self):
 
 
@@ -91,6 +93,10 @@ class Partie:
             playerPion = self.demander_forme_pion()
             self.joueurs.append(Joueur(name, type, playerPion))
         if rep==1:
+            print('---------------Difficulté---------------')
+            print("1- Normal.")
+            print("2- Imbattable.")
+            self.difficulte = self.saisir_nombre(1,2)
             name='Colosse'
             type='Ordinateur'
         playerPion = 'X' if playerPion == 'O' else 'O'
@@ -197,13 +203,15 @@ class Partie:
         assert choix in [1, 2], "Partie: choix doit être 1 ou 2."
 
         self.clean_print_plateau("Tour de "+self.joueurs[self.joueur_courant].nom +"("+self.joueurs[self.joueur_courant].pion+ ")\n\n")
-        ligne=-1
-        colonne=-1
-        bot = MinMaxBot()
+
         if (choix==2):
     	    case = self.demander_postion()
-        else:
+        elif (self.difficulte==2):
+            bot = MinMaxBot()
             case = bot.play(self.plateau.cases,self.joueurs[self.joueur_courant].pion)
+        else:
+            case = self.plateau.choisir_prochaine_case(self.joueurs[self.joueur_courant].pion)
+
         self.plateau.selectionner_case(case[0],case[1],self.joueurs[self.joueur_courant].pion)
 
 
