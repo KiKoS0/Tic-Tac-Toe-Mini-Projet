@@ -165,6 +165,7 @@ class Plateau:
         assert isinstance(pion, str), "Plateau: pion doit être une chaîne de caractères."
         assert pion in ["O", "X"], "Plateau: pion doit être 'O' ou 'X'."
         test=False
+
         while(not test):
             ligne= randrange(0,3)
             column= randrange(0,3)
@@ -172,36 +173,52 @@ class Plateau:
                 test=True
         #check if Pc can win
 		#check line
-        for i in range(0,2) :
+        for x in range(0,2) :
            # I think mehoush 9a3ed y checki fel tie 
-            for ch in range(0,2):
-                liste_vic_line =[[" ",pion,pion],[pion," ",pion],[pion,pion," "]]
+
+                liste_vic_line =[[' ',pion,pion],[pion,' ',pion],[pion,pion,' ']]
                 for i in range(0,3):
+
                     for k,l in enumerate(liste_vic_line) :
+                       test = True
                        for j in range(0,3) :
-                           if(l[j]!=self.cases[i,j]):
-                               break
-                           return i,k
+                           if(l[j] != self.cases[i,j]):
+                               test=False
+                       if test:
+                            return i,k
+                test=True
                 #check column
                 for i in range(0,3):
+
                     for k,l in enumerate(liste_vic_line) :
+                        test = True
                         for j in range(0,3) :
-                            if(l[j]!=self.cases[j,i]) :
-                                break
+                            if(l[j]!=self.cases[j,i]):
+                                test=False
+                        if test:
                             return k,i
+                test=True
                 #check Diagonal_gauche
 
-                for k,l in enumerate(liste_vic_line) :
+                for k,l in enumerate(liste_vic_line):
+                    test = True
                     for j in range(0,3) :
+
                         if(l[j]!=self.cases[j,j]):
-                            break
+                            test=False
+                    if test:
                         return k,k
+                test=True
                 #check Diagonal_droite
-                for k,l in enumerate(liste_vic_line) :
+                for k,l in enumerate(liste_vic_line):
+                    test = True
                     for j in range(0,3) :
                         if(l[j]!=self.cases[j,2-j]):
-                            break
+                            test=False
+                    if test:
                         return k,k
+
+                test = True
                 pion = 'X' if pion=='O' else 'O'
 
         return(ligne,column)
