@@ -182,7 +182,7 @@ class Plateau:
                     for k,l in enumerate(liste_vic_line) :
                        test = True
                        for j in range(0,3) :
-                           if(l[j] != self.cases[i,j]):
+                           if(l[j] != self.cases[i,j].contenu):
                                test=False
                        if test:
                             return i,k
@@ -193,7 +193,7 @@ class Plateau:
                     for k,l in enumerate(liste_vic_line) :
                         test = True
                         for j in range(0,3) :
-                            if(l[j]!=self.cases[j,i]):
+                            if(l[j]!=self.cases[j,i].contenu):
                                 test=False
                         if test:
                             return k,i
@@ -204,7 +204,7 @@ class Plateau:
                     test = True
                     for j in range(0,3) :
 
-                        if(l[j]!=self.cases[j,j]):
+                        if(l[j]!=self.cases[j,j].contenu):
                             test=False
                     if test:
                         return k,k
@@ -213,7 +213,7 @@ class Plateau:
                 for k,l in enumerate(liste_vic_line):
                     test = True
                     for j in range(0,3) :
-                        if(l[j]!=self.cases[j,2-j]):
+                        if(l[j]!=self.cases[j,2-j].contenu):
                             test=False
                     if test:
                         return k,k
