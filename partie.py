@@ -149,7 +149,9 @@ class Partie:
                 rejouer = self.saisir_nombre(0,1)
                 if rejouer==1:
                     # Reinitialsation pour recommencer
+                    difficulte = self.plateau.difficulte
                     self.plateau = Plateau()
+                    self.plateau.difficulte = difficulte
                     alternateur = cycle([0, 1])
                     self.joueur_courant = next(alternateur)
                     a_gagne=-1
