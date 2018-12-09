@@ -33,3 +33,7 @@ class Joueur:
         self.type = type    # Type du joueur ("Personne" ou "Ordinateur").
         self.pion = pion    # Forme du pion affecté au joueur.
         self.nb_parties_gagnees = 0 # Nombre de parties gagnées par le joueur.
+
+
+    def gagne(self):
+        self.nb_parties_gagnees+=1

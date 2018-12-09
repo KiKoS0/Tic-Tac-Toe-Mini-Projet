@@ -102,30 +102,43 @@ class Partie:
         a_gagne = -1
         iterator = cycle([0,1])
         self.joueur_courant = next(iterator)
+        rejouer = 1
         if rep in [1, 2]:
-
-            while (1):
-                if(self.joueurs[self.joueur_courant].type == 'Personne') :
-                    self.tour(2)
-                else :
-                    self.tour(rep)
-                for i in range(0,2):
-                    if self.plateau.est_gagnant(self.joueurs[i].pion):
-                        a_gagne= i
+            while(rejouer==1):
+                while (1):
+                    if(self.joueurs[self.joueur_courant].type == 'Personne') :
+                        self.tour(2)
+                    else :
+                        self.tour(rep)
+                    for i in range(0,2):
+                        if self.plateau.est_gagnant(self.joueurs[i].pion):
+                            a_gagne= i
+                            break
+                    if not (self.plateau.non_plein()) and a_gagne == -1:
+                        a_gagne=2
+                    if a_gagne!=-1:
                         break
-                if not (self.plateau.non_plein()) and a_gagne == -1:
-                    a_gagne=2
-                if a_gagne!=-1:
-                    break
-                self.joueur_courant = next(iterator)
+                    self.joueur_courant = next(iterator)
 
-            self.clean_print_plateau("Jeu Termine\n")
-            if a_gagne!=2:
-                print("\n\n"+self.joueurs[a_gagne].nom +" ("+self.joueurs[a_gagne].pion+ ") A Gagne")
-            else:
-                print("\n\nPartie nulle")
-                self.nb_parties_nulles+=1
-        print(self.joueur_courant)
+                self.clean_print_plateau("Jeu Termine\n")
+                if a_gagne!=2:
+                    self.joueurs[a_gagne].gagne()
+                    print("\n\n"+self.joueurs[a_gagne].nom +" ("+self.joueurs[a_gagne].pion+ ") A Gagne")
+                else:
+                    print("\n\nPartie nulle")
+                    self.nb_parties_nulles+=1
+
+                print("\n"+ "Partie gagne par "+self.joueurs[0].nom+": "+str(self.joueurs[0].nb_parties_gagnees))
+                print("Partie gagne par " + self.joueurs[1].nom + ": " + str(self.joueurs[1].nb_parties_gagnees))
+                print("Partie nulle: " +str(self.nb_parties_nulles))
+
+                print("\nVoulez vous recommencer? (0 (non),1 (oui))")
+                rejouer = self.saisir_nombre(0,1)
+                if rejouer==1:
+                    self.plateau = Plateau()
+                    iterator = cycle([0, 1])
+                    self.joueur_courant = next(iterator)
+                    a_gagne=-1
 
         print("*** Merci et au revoir ! ***")
 
