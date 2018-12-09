@@ -1,5 +1,5 @@
-__author__ = 'M. Bouden'
-__date__ = "Automne 2018"
+__authors__ = "Daghmoura Riadh - El Wardani Ammar"
+__date__ = "09/12/2018"
 
 """Ce fichier permet de définir la classe Joueur permettant de jouer au jeu Tic-Tac-Toe"""
 

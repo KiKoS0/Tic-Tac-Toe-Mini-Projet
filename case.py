@@ -1,7 +1,7 @@
-__author__ = 'M. Bouden'
-__date__ = "Automne 2018"
+__authors__ = "Daghmoura Riadh - El Wardani Ammar"
+__date__ = "09/12/2018"
 
-"""Ce fichier permet de définir la classe Case permettant de jouer au jeu Tic-Tac-Toe"""
+"""Ce fichier représente la classe Case qui est l'entité du jeu Tic-Tac-Toe"""
 
 class Case:
     """

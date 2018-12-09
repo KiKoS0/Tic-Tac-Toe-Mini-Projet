@@ -1,8 +1,12 @@
-__authors__ = "Ajoutez les noms des membres de votre équipe!"
-__date__ = "Ajoutez la date de remise"
+__authors__ = "Daghmoura Riadh - El Wardani Ammar"
+__date__ = "09/12/2018"
 
-"""Ce fichier permet de...(complétez la description de ce que
-ce fichier est supposé faire ! """
+"""
+    Ce fichier permet de controler la partie de jeu en commencant 
+    par demander les informations nécessaires pour jouer, alterner 
+    les tours des joueurs, demander a la classe plateau si le jeu est terminé,
+    afficher le jeu et de recommencer si l'utilisateur l'a demandé
+"""
 from plateau import Plateau
 from joueur import Joueur
 

@@ -1,9 +1,10 @@
-__authors__ = "Ajoutez les noms des membres de votre équipe!"
-__date__ = "Ajoutez la date de remise"
+__authors__ = "Daghmoura Riadh - El Wardani Ammar"
+__date__ = "09/12/2018"
 
 """
-Ce fichier permet de...(complétez la description de ce que
-ce fichier est supposé faire !
+    Ce fichier represente le tableau de jeu, c'est la seule interface 
+    controlant les cases du jeu, le comportement de l'ordinateur et 
+    detectant la fin du jeu.
 """
 
 from case import Case
