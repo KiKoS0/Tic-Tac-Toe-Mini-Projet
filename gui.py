@@ -15,6 +15,8 @@ from kivy.clock import Clock
 from math import cos, sin
 
 
+import plateau as plt
+
 Builder.load_string('''
 <GamePlateau>:
     size_hint: None, None
@@ -127,7 +129,7 @@ Builder.load_string('''
         GridLayout:
             canvas.before:
                 Color:
-                    rgba: 0.14, 0.14, 0.14, 1
+                    rgba: 0.14, 0.14, 0.14, 0.97
                 Rectangle:
                     pos: self.pos
                     size: self.size
@@ -225,7 +227,7 @@ Builder.load_string('''
                 text: 'Player Name'
             TextInput:
                 id: player_input0
-                text: ''
+                text: 'Joueur'
                 multiline: False
             Label:
                 id: player_label
@@ -283,22 +285,93 @@ class GamePlateau(Widget):
     pion = 'X'
     gagne1 = 0
     gagne2 = 0
+    nulles = 0
     Namep1 = ''
     Namep2 = ''
     currentPion ='X'
+    plateau = None
+    labelInterface = None
     def alternatePion(self):
         self.currentPion = 'O' if self.currentPion=='X' else 'X'
     def testButtons(self,button,num):
         print(str(button)+" "+str(num))
+        self.playButton(button)
+        case = plt.conversion_plateau_index[num]
+        self.plateau.selectionner_case(case[0],case[1],self.currentPion)
+        if self.plateau.est_gagnant(self.currentPion):
+            if self.isPlayer1():
+                self.player1Win()
+                return
+            else:
+                self.player2Win()
+                return
+        if not self.plateau.non_plein():
+            self.draw()
+            return
+        self.alternatePion()
+
+        if self.AiActivated:
+            case = self.plateau.choisir_prochaine_case(self.currentPion)
+            self.plateau.selectionner_case(case[0], case[1], self.currentPion)
+            case = plt.conversion_plateau_index2[case]
+            self.playButton(self.ids['btn'+str(case)])
+
+            if self.plateau.est_gagnant(self.currentPion):
+                self.player2Win()
+                return
+            if not self.plateau.non_plein():
+                self.draw()
+                return
+
+            self.alternatePion()
+        else:
+            return
+    def isPlayer1(self):
+        return self.currentPion == self.pion
+    def player1Win(self):
+        self.blockBtns()
+        self.gagne1+=1
+        self.updateScores()
+        popup = Popup(title=str(self.Namep1)+' a gagné',
+                      content=Label(text=str(self.Namep1) + ' a gagné'),
+                      size_hint=(None, None), size=(150, 150))
+        popup.open()
+    def player2Win(self):
+        self.blockBtns()
+        self.gagne2 += 1
+        self.updateScores()
+        popup = Popup(title=str(self.Namep2)+' a gagné',
+                      content=Label(text=str(self.Namep2) + ' a gagné'),
+                      size_hint=(None, None), size=(150, 150))
+        popup.open()
+    def draw(self):
+        self.blockBtns()
+        self.nulles +=1
+        self.updateScores()
+        popup = Popup(title='Partie nulle',
+                      content=Label(text='Partie nulle'),
+                      size_hint=(None, None), size=(150, 150))
+        popup.open()
+    def blockBtns(self):
+        btnStr = 'btn'
+        for i in range(0,9):
+            btn = self.ids[btnStr+str(i)]
+            btn.disabled = True
+    def updateScores(self):
+        if(self.labelInterface!=None):
+            self.labelInterface.updateScore()
+            self.labelInterface.ids.page_layout.page = 1
+
+
+    def playButton(self,button):
         if self.currentPion=='O':
             self.oButton(button)
         else:
             self.xButton(button)
-        self.alternatePion()
-
     def xButton(self,button):
         button.disabled= True
         button.text = 'X'
+        button.background_color = ((0.6, 1, 0.4, 1))
     def oButton(self,button):
         button.disabled= True
         button.text = 'O'
@@ -333,8 +406,6 @@ class GameScreen(Screen):
     AiDifficult = False
     pion = 'X'
 
-
-    nulle = 0
     def on_pre_enter(self, *args):
         plat = self.ids['game_plateau']
         menu = self.manager.get_screen('menu')
@@ -345,11 +416,13 @@ class GameScreen(Screen):
 
         plat.Namep1 = menu.ids.player_input0.text
         plat.Namep2 = menu.ids.player_input.text
+        plat.gagne1 = 0
+        plat.gagne2 = 0
+        plat.gagne3 = 0
         if plat.Namep1=='':
             plat.Namep1 = 'Joueur1'
         if plat.Namep2=='':
             plat.Namep2 = 'Joueur2'
-        self.resetGame()
         print('Game Initialization')
         print('Ai activation : ' + str(plat.AiActivated))
         print('Ai difficult : ' + str(plat.AiDifficult))
@@ -357,6 +430,8 @@ class GameScreen(Screen):
         aa = 'Partie gagnés par '
         self.ids.gagne_label1.text = aa+str(plat.Namep1)+' :'
         self.ids.gagne_label2.text = aa + str(plat.Namep2) + ' :'
+        self.resetGame()
+        plat.labelInterface = self
 
     def resetGame(self):
         btnStr = 'btn'
@@ -365,8 +440,25 @@ class GameScreen(Screen):
             btn = test.ids[btnStr+str(i)]
             btn.disabled=False
             btn.text = ''
+            btn.background_color  = 0.31, 0.5, 0.69, 1.0
+
+        plat = self.ids['game_plateau']
+        plat.plateau = plt.Plateau()
+        plat.plateau.difficulte = 2 if plat.AiDifficult else 1
+
+        menu = self.manager.get_screen('menu')
+        plat.pion = menu.pion
+        plat.currentPion = menu.pion
+
+        self.updateScore()
         self.ids.page_layout.page = 0
-        pass
+
+    def updateScore(self):
+        plat = self.ids['game_plateau']
+        aa = 'Partie gagnés par '
+        self.ids.gagne_val1.text = str(plat.gagne1)
+        self.ids.gagne_val2.text = str(plat.gagne2)
+        self.ids.gagne_val3.text = str(plat.nulles)
 
 
 screen_manager = ScreenManager(transition=FallOutTransition())
