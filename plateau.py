@@ -223,7 +223,7 @@ class Plateau:
                         if(l[j]!=self.cases[j,2-j].contenu):
                             test=False
                     if test:
-                        return k,k
+                        return k,2-k
                 test = True
                 pion = 'X' if pion=='O' else 'O'
 
