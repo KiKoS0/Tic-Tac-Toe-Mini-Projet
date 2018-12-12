@@ -357,9 +357,6 @@ class GamePlateau(Widget):
         self.blockBtns()
         self.gagne1+=1
         self.updateScores()
-        popup = Popup(title=str(self.Namep1)+' a gagné',
-                      content=Label(text=str(self.Namep1) + ' a gagné'),
-                      size_hint=(None, None), size=(150, 150))
         popup = CustomPopUp()
         popup.uiScreen = self.labelInterface
         popup.title = 'Vainqueur'
@@ -369,9 +366,6 @@ class GamePlateau(Widget):
         self.blockBtns()
         self.gagne2 += 1
         self.updateScores()
-        popup = Popup(title=str(self.Namep2)+' a gagné',
-                      content=Label(text=str(self.Namep2) + ' a gagné'),
-                      size_hint=(None, None), size=(150, 150))
         popup = CustomPopUp()
         popup.uiScreen = self.labelInterface
         popup.title = 'Vainqueur'
@@ -381,9 +375,6 @@ class GamePlateau(Widget):
         self.blockBtns()
         self.nulles +=1
         self.updateScores()
-        popup = Popup(title='Partie nulle',
-                      content=Label(text='Partie nulle'),
-                      size_hint=(None, None), size=(150, 150))
         popup = CustomPopUp()
         popup.uiScreen = self.labelInterface
         popup.title = 'Partie Nulle'
