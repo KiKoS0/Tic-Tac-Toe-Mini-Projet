@@ -274,9 +274,34 @@ Builder.load_string('''
                     text: 'Quitter'
                     on_press: quit()
                     
-
+<CustomPopUp@Popup>
+    auto_dismiss: True
+    size_hint: None,None
+    size: 150,150
+    on_dismiss: root.getOut();
+    GridLayout:
+        rows: 2 
+        Label:
+            id: who_won
+            text: 'ABC Won'
+        Button:
+            text: 'Recommencer'
+            on_release: root.resetGame();root.dismiss();
+    
 ''')
 
+class CustomPopUp(Popup):
+    uiScreen = None
+    restarted = False
+    def resetGame(self):
+        if(self.uiScreen!= None):
+            self.uiScreen.resetGame()
+            self.restarted = True
+    def getOut(self):
+        if(self.restarted==False):
+            self.uiScreen.ids.page_layout.page = 1
+        return False
+    pass
 
 
 class GamePlateau(Widget):
@@ -335,6 +360,10 @@ class GamePlateau(Widget):
         popup = Popup(title=str(self.Namep1)+' a gagné',
                       content=Label(text=str(self.Namep1) + ' a gagné'),
                       size_hint=(None, None), size=(150, 150))
+        popup = CustomPopUp()
+        popup.uiScreen = self.labelInterface
+        popup.title = 'Vainqueur'
+        popup.ids.who_won.text = str(self.Namep1) + ' a gagné'
         popup.open()
     def player2Win(self):
         self.blockBtns()
@@ -343,6 +372,10 @@ class GamePlateau(Widget):
         popup = Popup(title=str(self.Namep2)+' a gagné',
                       content=Label(text=str(self.Namep2) + ' a gagné'),
                       size_hint=(None, None), size=(150, 150))
+        popup = CustomPopUp()
+        popup.uiScreen = self.labelInterface
+        popup.title = 'Vainqueur'
+        popup.ids.who_won.text = str(self.Namep2) + ' a gagné'
         popup.open()
     def draw(self):
         self.blockBtns()
@@ -351,6 +384,10 @@ class GamePlateau(Widget):
         popup = Popup(title='Partie nulle',
                       content=Label(text='Partie nulle'),
                       size_hint=(None, None), size=(150, 150))
+        popup = CustomPopUp()
+        popup.uiScreen = self.labelInterface
+        popup.title = 'Partie Nulle'
+        popup.ids.who_won.text = 'Partie nulle'
         popup.open()
     def blockBtns(self):
         btnStr = 'btn'
@@ -360,7 +397,7 @@ class GamePlateau(Widget):
     def updateScores(self):
         if(self.labelInterface!=None):
             self.labelInterface.updateScore()
-            self.labelInterface.ids.page_layout.page = 1
+            #self.labelInterface.ids.page_layout.page = 1
 
 
     def playButton(self,button):
